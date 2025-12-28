@@ -12,7 +12,11 @@ app.get("/ping", (req, res) => {
   res.json({ message: "Backend is reachable" });
 });
 
-// IMPORTANT: use environment port
+// AUTH ROUTES
+const authRoutes = require("./routes/authRoutes");
+app.use("/api/auth", authRoutes);
+
+// port
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

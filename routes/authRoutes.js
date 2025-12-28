@@ -1,14 +1,26 @@
-console.log("AUTH ROUTES FILE LOADED");
-
 const express = require("express");
-const {
-  registerUser,
-  loginUser,
-} = require("../controllers/authController");
-
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+// TEMP login (no DB yet – just to test JWT)
+router.post("/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password required" });
+  }
+
+  // Create JWT token
+  const token = jwt.sign(
+    { email },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
+
+  res.json({
+    message: "Login successful",
+    token
+  });
+});
 
 module.exports = router;
