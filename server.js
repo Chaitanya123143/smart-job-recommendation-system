@@ -17,6 +17,9 @@ const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 const profileRoutes = require("./routes/profileRoutes");
 app.use("/api", profileRoutes);
+const resumeRoutes = require("./routes/resumeRoutes");
+app.use("/api", resumeRoutes);
+
 
 // port
 const PORT = process.env.PORT || 5000;

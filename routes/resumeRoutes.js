@@ -1,34 +1,35 @@
 const express = require("express");
-const multer = require("multer");
-const fs = require("fs");
-const pdfParse = require("pdf-parse");
-const protect = require("../middleware/authMiddleware");
-
 const router = express.Router();
+const multer = require("multer");
+const authMiddleware = require("../middleware/authMiddleware");
 
-const upload = multer({
-  dest: "uploads/",
+// storage config
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
 
-// POST /api/resume/upload
-router.post("/upload", protect, upload.single("resume"), async (req, res) => {
-  try {
+const upload = multer({ storage });
+
+// upload resume (protected)
+router.post(
+  "/resume/upload",
+  authMiddleware,
+  upload.single("resume"),
+  (req, res) => {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const dataBuffer = fs.readFileSync(req.file.path);
-    const pdfData = await pdfParse(dataBuffer);
-
-    fs.unlinkSync(req.file.path);
-
     res.json({
       message: "Resume uploaded successfully",
-      text: pdfData.text,
+      file: req.file.filename,
     });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
-});
+);
 
 module.exports = router;
