@@ -5,30 +5,31 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// memory storage (cloud safe)
-const upload = multer({ storage: multer.memoryStorage() });
+// MEMORY storage (NO uploads folder)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
 
-router.post(
-  "/upload",
-  authMiddleware,
-  upload.single("resume"),
-  async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+router.post("/upload", authMiddleware, upload.single("resume"), async (req, res) => {
+  try {
+    console.log("Resume upload hit");
 
-      const data = await pdfParse(req.file.buffer);
-
-      res.json({
-        message: "Resume processed successfully",
-        extractedTextPreview: data.text.substring(0, 500)
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Resume processing failed" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No resume file uploaded" });
     }
+
+    const pdfData = await pdfParse(req.file.buffer);
+
+    res.json({
+      message: "Resume uploaded and parsed successfully",
+      preview: pdfData.text.substring(0, 300),
+    });
+
+  } catch (error) {
+    console.error("RESUME ERROR:", error);
+    res.status(500).json({ message: "Resume processing failed" });
   }
-);
+});
 
 module.exports = router;
