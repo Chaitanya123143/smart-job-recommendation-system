@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 
@@ -12,21 +13,18 @@ app.get("/ping", (req, res) => {
   res.json({ message: "Backend is reachable" });
 });
 
-// AUTH ROUTES
+// routes
 const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
+
+// mount routes
 app.use("/api/auth", authRoutes);
-const profileRoutes = require("./routes/profileRoutes");
-app.use("/api", profileRoutes);
-const resumeRoutes = require("./routes/resumeRoutes");
-app.use("/api", resumeRoutes);
-const profileRoutes = require("./routes/profileRoutes");
 app.use("/api/profile", profileRoutes);
-const resumeRoutes = require("./routes/resumeRoutes");
 app.use("/api/resume", resumeRoutes);
 
-
-// port
-const PORT = process.env.PORT || 5000;
+// port (Render safe)
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
