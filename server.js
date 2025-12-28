@@ -19,6 +19,10 @@ const profileRoutes = require("./routes/profileRoutes");
 app.use("/api", profileRoutes);
 const resumeRoutes = require("./routes/resumeRoutes");
 app.use("/api", resumeRoutes);
+const profileRoutes = require("./routes/profileRoutes");
+app.use("/api/profile", profileRoutes);
+const resumeRoutes = require("./routes/resumeRoutes");
+app.use("/api/resume", resumeRoutes);
 
 
 // port
