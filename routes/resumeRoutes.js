@@ -1,6 +1,5 @@
 const express = require("express");
 const multer = require("multer");
-const pdf = require("pdf-parse");   // ✅ correct import
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -20,8 +19,10 @@ router.post(
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      // ✅ correct usage
-      const data = await pdf(req.file.buffer);
+      // ✅ Dynamic import for pdf-parse (Node 18+ fix)
+      const pdfParse = (await import("pdf-parse")).default;
+
+      const data = await pdfParse(req.file.buffer);
 
       res.json({
         message: "Resume processed successfully",
