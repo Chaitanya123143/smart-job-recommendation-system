@@ -1,10 +1,11 @@
 const express = require("express");
 const multer = require("multer");
-const pdfParse = require("pdf-parse/lib/pdf-parse");
+const pdf = require("pdf-parse");   // ✅ correct import
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// cloud-safe memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
 });
@@ -19,7 +20,8 @@ router.post(
         return res.status(400).json({ message: "No file uploaded" });
       }
 
-      const data = await pdfParse(req.file.buffer);
+      // ✅ correct usage
+      const data = await pdf(req.file.buffer);
 
       res.json({
         message: "Resume processed successfully",
@@ -27,7 +29,7 @@ router.post(
       });
 
     } catch (error) {
-      console.error("RESUME ERROR:", error.message);
+      console.error("RESUME ERROR:", error);
 
       res.status(500).json({
         message: "Resume processing failed",
