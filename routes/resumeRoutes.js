@@ -1,10 +1,10 @@
 const express = require("express");
 const multer = require("multer");
+const pdfParse = require("pdf-parse"); // ✅ WORKS with v1.1.1
 const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// cloud-safe memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
 });
@@ -18,9 +18,6 @@ router.post(
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
       }
-
-      // ✅ Dynamic import for pdf-parse (Node 18+ fix)
-      const pdfParse = (await import("pdf-parse")).default;
 
       const data = await pdfParse(req.file.buffer);
 
